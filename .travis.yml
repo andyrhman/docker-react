@@ -1,4 +1,4 @@
-sudo: required
+language: ruby
 services:
   - docker
 
@@ -6,4 +6,5 @@ before_install:
   - docker build -t tataran/docker-react -f Dockerfile.dev .
 
 script:
-  - docker run tataran/docker-react npm run test -- --coverage
+  - docker run -d -e CI=true tataran/docker-react
+  - docker exec -it tataran/docker-react npm run test -- --coverage
