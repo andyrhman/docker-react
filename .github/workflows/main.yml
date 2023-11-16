@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t tataran/docker-react -f Dockerfile.dev .
+
+    - name: Run Tests
+      run: |
+        docker run -d -e CI=true tataran/docker-react
+        docker exec -it tataran/docker-react npm run test -- --coverage
