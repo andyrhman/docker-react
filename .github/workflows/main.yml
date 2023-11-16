@@ -17,5 +17,4 @@ jobs:
       run: docker build -t tataran/docker-react -f Dockerfile.dev .
 
     - name: Run Tests
-      run: |
-        docker run tataran/docker-react npm run test -- --coverage
+      run: docker run tataran/docker-react npm run test -- --coverage
