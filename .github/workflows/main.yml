@@ -18,5 +18,4 @@ jobs:
 
     - name: Run Tests
       run: |
-        docker run -d -e CI=true tataran/docker-react
-        docker exec -it tataran/docker-react npm run test -- --coverage
+        docker run tataran/docker-react npm run test -- --coverage
