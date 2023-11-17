@@ -1,5 +1,5 @@
 # https://www.phind.com/search?cache=uw30a1s89jaw9t13lrqbq633
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -11,11 +11,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Build Docker image
       run: docker build -t tataran/docker-react -f Dockerfile.dev .
 
-    - name: Run Tests
-      run: docker run --rm -e CI=true tataran/docker-react npm run test -- --coverage
+    - name: Run tests
+      run: docker run -e CI=true tataran/docker-react npm run test
+
+    - name: Zip application code
+      run: zip -r application_${{ github.run_id }}.zip .
+
+    - name: Install AWS CLI v2
+      uses: unfor19/install-aws-cli-action@v1
+      with:
+        version: 2
+
+    - name: Upload ZIP to S3
+      run: aws s3 cp application_${{ github.run_id }}.zip s3://elasticbeanstalk-ap-southeast-1-503205327707/docker-with-react/
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Deploy to AWS Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+        application_name: docker-with-react
+        environment_name: Docker-with-react-env
+        region: ap-southeast-1
+        version_label: ${{ github.run_id }}
+        deployment_package: s3://elasticbeanstalk-ap-southeast-1-503205327707/docker-with-react/application_${{ github.run_id }}.zip
+
