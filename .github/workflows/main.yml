@@ -21,7 +21,6 @@ jobs:
       run: docker run -e CI=true tataran/docker-react npm run test
 
   deploy:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -36,8 +35,8 @@ jobs:
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
         aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-        application_name: docker-react-3
-        environment_name: Docker-react-3-env
+        application_name: test-1
+        environment_name: test-1-env
         region: ap-southeast-1
-        version_label: 12345
+        version_label: ${{github.run_number}}
         deployment_package: deploy.zip
