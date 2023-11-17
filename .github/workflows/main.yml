@@ -28,16 +28,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Zip application code
-      run: zip -r ${{ github.run_id }}.zip .
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
 
     - name: Deploy to AWS Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
         aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-        application_name: docker-with-react
-        environment_name: Docker-with-react-env
+        application_name: docker-react-3
+        environment_name: Docker-react-3-env
         region: ap-southeast-1
-        version_label: ${{ github.run_id }}
-        deployment_package: ${{ github.run_id }}.zip
+        version_label: 12345
+        deployment_package: deploy.zip
