@@ -49,7 +49,7 @@ jobs:
         version: 2
 
     - name: Download ZIP from S3
-      run: aws s3 cp s3://elasticbeanstalk-ap-southeast-1-503205327707/docker-with-react/application_${{ github.run_id }}.zip application_${{ github.run_id }}.zip
+      run: aws s3 cp s3://elasticbeanstalk-ap-southeast-1-503205327707/docker-with-react/application_${{ github.run_id }}.zip ${{ github.run_id }}.zip
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
