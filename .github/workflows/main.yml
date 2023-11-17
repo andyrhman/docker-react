@@ -43,6 +43,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install AWS CLI v2
+      uses: unfor19/install-aws-cli-action@v1
+      with:
+        version: 2
+
+    - name: Download ZIP from S3
+      run: aws s3 cp s3://elasticbeanstalk-ap-southeast-1-503205327707/docker-with-react/application_${{ github.run_id }}.zip application_${{ github.run_id }}.zip
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_DEFAULT_REGION: 'ap-southeast-1'
+
     - name: Deploy to AWS Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
       with:
@@ -52,4 +64,4 @@ jobs:
         environment_name: Docker-with-react-env
         region: ap-southeast-1
         version_label: ${{ github.run_id }}
-        deployment_package: application_${{ github.run_id }}.zip
+        deployment_package: ${{ github.run_id }}.zip
